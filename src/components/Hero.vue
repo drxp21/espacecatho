@@ -1,11 +1,11 @@
 <template>
-    <section class="relative pt-20 pb-5 transition-colors duration-300 bg-stone-50 dark:bg-stone-900">
+    <section id="home" class="relative pt-20 pb-5 transition-colors duration-300 bg-stone-50 dark:bg-stone-900">
         <!-- Background image with overlay -->
         <div class="absolute inset-0 bg-cover bg-center opacity-15 dark:opacity-10"
             style="background-image: url('/images/cathedral-background.jpg')"></div>
 
         <!-- Subtle cross design element -->
-        <div class="absolute top-0 right-0 w-32 h-64 opacity-10 dark:opacity-5">
+        <div class="absolute h-48 top-14 right-0 w-32 h-64 opacity-20 dark:opacity-10 overflow-hidden rotate-180">
             <div class="w-8 h-64 mx-auto bg-yellow-700 dark:bg-yellow-600"></div>
             <div class="w-32 h-8 -mt-36 bg-yellow-700 dark:bg-yellow-600"></div>
         </div>

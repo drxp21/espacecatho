@@ -59,7 +59,7 @@ onUnmounted(() => {
                 <div class="inline-flex relative bg-inherit z-20">
                     <router-link to="/"
                         class="router-link-active router-link-exact-active flex items-center gap-2 transition-transform hover:scale-105">
-                        <img src="../assets/logo.png" class="w-20" alt="Espace Catholique" />
+                        <img src="../assets/logo.png" class="w-56 filter drop-shadow-xl drop-shadow-red-500" alt="Espace Catholique" />
                     </router-link>
                 </div>
 
@@ -69,7 +69,7 @@ onUnmounted(() => {
                     <ul
                         class="text-stone-700 dark:text-stone-300 w-full flex lg:items-center gap-y-4 lg:gap-x-4 xl:gap-x-8 flex-col lg:flex-row font-serif">
                         <li class="lg:inline-flex">
-                            <router-link to="/" 
+                            <router-link to="/#home" 
                                 class="lg:inline-flex transition-all ease-out duration-200 text-base lg:text-lg relative px-2 py-1"
                                 :class="[activeSection === 'home' ? 'text-yellow-700 dark:text-yellow-500 font-medium' : 'hover:text-yellow-700 dark:hover:text-yellow-500']">
                                 Accueil
@@ -78,7 +78,7 @@ onUnmounted(() => {
                             </router-link>
                         </li>
                         <li class="lg:inline-flex">
-                            <router-link to="/events" 
+                            <router-link to="#footer" 
                                 class="lg:inline-flex transition-all ease-out duration-200 text-base lg:text-lg relative px-2 py-1"
                                 :class="[activeSection === 'events' ? 'text-yellow-700 dark:text-yellow-500 font-medium' : 'hover:text-yellow-700 dark:hover:text-yellow-500']">
                                 Événements
@@ -87,7 +87,7 @@ onUnmounted(() => {
                             </router-link>
                         </li>
                         <li class="lg:inline-flex">
-                            <router-link to="/#about" 
+                            <router-link to="/#footer" 
                                 class="lg:inline-flex transition-all ease-out duration-200 text-base lg:text-lg relative px-2 py-1"
                                 :class="[activeSection === 'about' ? 'text-yellow-700 dark:text-yellow-500 font-medium' : 'hover:text-yellow-700 dark:hover:text-yellow-500']">
                                 À propos
@@ -96,7 +96,7 @@ onUnmounted(() => {
                             </router-link>
                         </li>
                         <li class="lg:inline-flex">
-                            <router-link to="/#contact" 
+                            <router-link to="/#footer" 
                                 class="lg:inline-flex transition-all ease-out duration-200 text-base lg:text-lg relative px-2 py-1"
                                 :class="[activeSection === 'contact' ? 'text-yellow-700 dark:text-yellow-500 font-medium' : 'hover:text-yellow-700 dark:hover:text-yellow-500']">
                                 Contact

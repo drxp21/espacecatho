@@ -32,7 +32,7 @@ onMounted(() => {
                 <router-link :to="{ name: 'article', params: { id: article.id } }">
                     <!-- Image -->
                     <div class="overflow-hidden group">
-                        <img :src="article.image" :alt="article.title" loading="lazy"
+                        <img :src="`article.image`" :alt="article.title" loading="lazy"
                             class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110" />
                     </div>
                     <!-- Contenu -->

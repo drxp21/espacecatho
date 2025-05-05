@@ -23,6 +23,11 @@ const router = createRouter({
       component: () => import('../views/Article.vue'),
 
     },
+    {
+      path: '/inscription',
+      name: 'inscription',
+      component: () => import('../views/Inscription.vue'),
+    }
   ],
 })
 

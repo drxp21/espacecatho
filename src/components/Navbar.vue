@@ -59,7 +59,8 @@ onUnmounted(() => {
                 <div class="inline-flex relative bg-inherit z-20">
                     <router-link to="/"
                         class="router-link-active router-link-exact-active flex items-center gap-2 transition-transform hover:scale-105">
-                        <img src="../assets/logo.png" class="w-56 filter drop-shadow-xl drop-shadow-red-500" alt="Espace Catholique" />
+                        <img src="../assets/logo.png" class="w-56 filter drop-shadow-xl drop-shadow-red-500"
+                            alt="Espace Catholique" />
                     </router-link>
                 </div>
 
@@ -69,16 +70,21 @@ onUnmounted(() => {
                     <ul
                         class="text-stone-700 dark:text-stone-300 w-full flex lg:items-center gap-y-4 lg:gap-x-4 xl:gap-x-8 flex-col lg:flex-row font-serif">
                         <li class="lg:inline-flex">
-                            <router-link to="/#home" 
-                                class="lg:inline-flex transition-all ease-out duration-200 text-base lg:text-lg relative px-2 py-1"
-                                :class="[activeSection === 'home' ? 'text-yellow-700 dark:text-yellow-500 font-medium' : 'hover:text-yellow-700 dark:hover:text-yellow-500']">
-                                Accueil
-                                <span v-if="activeSection === 'home'"
-                                    class="absolute hidden lg:block bottom-0 left-0 w-full h-0.5 bg-yellow-700 dark:bg-yellow-500 rounded-full transform scale-x-100 transition-transform origin-left"></span>
+                            <router-link to="/#home" custom v-slot="{ navigate, isActive }">
+                                <a @click="navigate"
+                                    class="lg:inline-flex transition-all ease-out duration-200 text-base lg:text-lg relative px-2 py-1"
+                                    :class="[
+                                        isActive
+                                            ? 'text-yellow-700 dark:text-yellow-500 font-medium'
+                                            : 'hover:text-yellow-700 dark:hover:text-yellow-500'
+                                    ]">
+                                    Accueil
+                                   
+                                </a>
                             </router-link>
                         </li>
                         <li class="lg:inline-flex">
-                            <router-link to="#footer" 
+                            <router-link to="#footer"
                                 class="lg:inline-flex transition-all ease-out duration-200 text-base lg:text-lg relative px-2 py-1"
                                 :class="[activeSection === 'events' ? 'text-yellow-700 dark:text-yellow-500 font-medium' : 'hover:text-yellow-700 dark:hover:text-yellow-500']">
                                 Événements
@@ -87,7 +93,7 @@ onUnmounted(() => {
                             </router-link>
                         </li>
                         <li class="lg:inline-flex">
-                            <router-link to="/#footer" 
+                            <router-link to="/#footer"
                                 class="lg:inline-flex transition-all ease-out duration-200 text-base lg:text-lg relative px-2 py-1"
                                 :class="[activeSection === 'about' ? 'text-yellow-700 dark:text-yellow-500 font-medium' : 'hover:text-yellow-700 dark:hover:text-yellow-500']">
                                 À propos
@@ -96,7 +102,7 @@ onUnmounted(() => {
                             </router-link>
                         </li>
                         <li class="lg:inline-flex">
-                            <router-link to="/#footer" 
+                            <router-link to="/#footer"
                                 class="lg:inline-flex transition-all ease-out duration-200 text-base lg:text-lg relative px-2 py-1"
                                 :class="[activeSection === 'contact' ? 'text-yellow-700 dark:text-yellow-500 font-medium' : 'hover:text-yellow-700 dark:hover:text-yellow-500']">
                                 Contact
@@ -105,7 +111,7 @@ onUnmounted(() => {
                             </router-link>
                         </li>
 
-                        <router-link to="/inscription" 
+                        <router-link to="/inscription"
                             class="px-4 xl:px-5 py-2 rounded-md relative group overflow-hidden block lg:hidden">
                             <span
                                 class="absolute inset-0 rounded-md transition-all duration-300 ease-in-out bg-yellow-700 dark:bg-yellow-600 border border-yellow-800 dark:border-yellow-700 group-hover:bg-yellow-800 dark:group-hover:bg-yellow-700">
@@ -134,7 +140,8 @@ onUnmounted(() => {
 
                     <!-- Login/Register buttons (desktop only) -->
                     <div class="hidden lg:flex lg:items-center gap-3 xl:gap-4">
-                        <router-link to="/inscription" class="px-4 xl:px-5 py-2 rounded-md relative group overflow-hidden">
+                        <router-link to="/inscription"
+                            class="px-4 xl:px-5 py-2 rounded-md relative group overflow-hidden">
                             <span
                                 class="absolute inset-0 rounded-md transition-all duration-300 ease-in-out bg-yellow-700 dark:bg-yellow-600 border border-yellow-800 dark:border-yellow-700 group-hover:bg-yellow-800 dark:group-hover:bg-yellow-700">
                             </span>

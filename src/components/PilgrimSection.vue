@@ -106,7 +106,7 @@
 
                     <!-- CTA button -->
                     <div class="mt-8">
-                        <a href="#inscription"
+                        <router-link :to="{ name: 'inscription' }"
                             class="inline-flex items-center px-6 py-3 bg-yellow-700 hover:bg-yellow-800 text-white font-medium rounded shadow transition dark:bg-yellow-600 dark:hover:bg-yellow-700 focus:ring-2 focus:ring-yellow-500">
                             S'inscrire au pèlerinage
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24"
@@ -114,7 +114,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M17 8l4 4m0 0l-4 4m4-4H3" />
                             </svg>
-                        </a>
+                        </router-link>
                     </div>
 
                     <!-- Quick info cards -->

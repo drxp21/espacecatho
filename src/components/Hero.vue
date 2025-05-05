@@ -26,10 +26,10 @@
                     </p>
 
                     <div class="flex flex-wrap gap-4">
-                        <button
+                        <router-link :to="{ name: 'inscription' }"
                             class="px-6 py-3 bg-yellow-700 hover:bg-yellow-800 text-white font-medium rounded shadow transition dark:bg-yellow-600 dark:hover:bg-yellow-700 focus:ring-2 focus:ring-yellow-500">
                             S'inscrire à la marche-pélerinage
-                        </button>
+                        </router-link>
 
                     </div>
 

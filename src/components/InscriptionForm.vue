@@ -43,7 +43,7 @@
                         </span>
 
                         <!-- Line connecting steps -->
-                        <div v-if="index < steps.length - 1" class="ml-10 absolute top-5 left-10 w-full h-0.5 -z-0" :class="[
+                        <div v-if="index < steps.length - 1" class="ml-0 md:ml-10 absolute top-5 left-10 w-full h-0.5 -z-0" :class="[
                             currentStep > index
                                 ? 'bg-yellow-600 dark:bg-yellow-700'
                                 : 'bg-stone-200 dark:bg-stone-700'
@@ -79,12 +79,33 @@
                                         class="w-full border-stone-300 dark:border-stone-600 rounded-md shadow-sm py-2 px-3 focus:ring-yellow-500 focus:border-yellow-500 dark:bg-stone-700 dark:text-stone-200"
                                         required>
                                         <option value="" disabled selected>Sélectionnez votre paroisse</option>
-                                        <option v-for="paroisse in paroisses" :key="paroisse" :value="paroisse">
-                                            {{ paroisse }}
+                                        <option v-if="loading" value="" disabled>Chargement des paroisses...</option>
+                                        <option v-for="paroisse in paroisses" :key="paroisse.ID" :value="paroisse.ID">
+                                            {{ paroisse.Nom_paroisse }}
                                         </option>
                                     </select>
                                     <p v-if="errors.paroisse" class="mt-1 text-red-600 text-sm">{{ errors.paroisse }}
                                     </p>
+                                </div>
+                                
+                                <!-- Affichage du logo de la paroisse sélectionnée -->
+                                <div v-if="selectedParoisse" class="mt-4 flex flex-col items-center">
+                                    <div class="w-32 h-32 flex items-center justify-center overflow-hidden rounded-md bg-white p-2 border border-stone-200">
+                                        <img :src="'data:image/jpeg;base64,' + selectedParoisse.Logo" 
+                                             :alt="selectedParoisse.Nom_paroisse" 
+                                             class="max-w-full max-h-full object-contain" />
+                                    </div>
+                                    <div class="mt-3 text-center">
+                                        <h4 class="font-semibold text-stone-800 dark:text-stone-200">
+                                            {{ selectedParoisse.Nom_paroisse }}
+                                        </h4>
+                                        <p class="text-sm text-stone-600 dark:text-stone-400">
+                                            Doyenné de {{ selectedParoisse.doyenne }}
+                                        </p>
+                                        <p v-if="selectedParoisse.Prix > 0" class="text-sm font-semibold text-yellow-600 dark:text-yellow-500 mt-1">
+                                            Prix: {{ selectedParoisse.Prix }} FCFA
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -176,32 +197,16 @@
                                     </label>
                                     <select id="ceb" v-model="formData.ceb"
                                         class="w-full border-stone-300 dark:border-stone-600 rounded-md shadow-sm py-2 px-3 focus:ring-yellow-500 focus:border-yellow-500 dark:bg-stone-700 dark:text-stone-200"
-                                        required>
+                                        >
                                         <option value="" disabled selected>Sélectionnez votre CEB</option>
-                                        <option v-for="ceb in cebs" :key="ceb" :value="ceb">{{ ceb }}</option>
+                                        <option v-if="loadingCebs" value="" disabled>Chargement des CEBs...</option>
+                                        <option v-if="cebs.length === 0" value="Autre">Autre</option>
+                                        <option v-for="ceb in cebs" :key="ceb.id" :value="ceb.id">{{ ceb.nom }}</option>
                                     </select>
                                     <p v-if="errors.ceb" class="mt-1 text-red-600 text-sm">{{ errors.ceb }}</p>
                                 </div>
 
-                                <div class="md:col-span-2">
-                                    <div class="flex items-start">
-                                        <div class="flex items-center h-5">
-                                            <input id="acceptTerms" v-model="formData.acceptTerms" type="checkbox"
-                                                class="focus:ring-yellow-500 h-4 w-4 text-yellow-600 border-stone-300 dark:border-stone-600 rounded"
-                                                required />
-                                        </div>
-                                        <div class="ml-3 text-sm">
-                                            <label for="acceptTerms"
-                                                class="font-medium text-stone-700 dark:text-stone-300 font-serif">
-                                                J'accepte les <a href="#"
-                                                    class="text-yellow-600 dark:text-yellow-500 hover:underline">conditions
-                                                    de participation</a> au pèlerinage
-                                            </label>
-                                            <p v-if="errors.acceptTerms" class="mt-1 text-red-600">{{ errors.acceptTerms
-                                            }}</p>
-                                        </div>
-                                    </div>
-                                </div>
+                              
                             </div>
                         </div>
 
@@ -220,7 +225,7 @@
                                     <div class="flex flex-col">
                                         <span class="text-stone-500 dark:text-stone-400">Paroisse:</span>
                                         <span class="font-medium text-stone-800 dark:text-stone-200">{{
-                                            formData.paroisse }}</span>
+                                            selectedParoisse ? selectedParoisse.Nom_paroisse : formData.paroisse }}</span>
                                     </div>
 
                                     <div class="flex flex-col">
@@ -323,9 +328,9 @@
                                 Précédent
                             </button>
 
-                            <button type="submit"
+                            <button type="submit" v-if="currentStep < 3"
                                 class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:bg-yellow-700 dark:hover:bg-yellow-800">
-                                <span v-if="currentStep < 3" class="flex items-center gap-2">
+                                <span  class="flex items-center gap-2">
                                     Suivant
                                     <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -333,14 +338,12 @@
                                             d="M9 5l7 7-7 7" />
                                     </svg>
                                 </span>
-                                <span v-else class="flex items-center gap-2">
-                                    Confirmer
-                                    <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </span>
+                               
+                            </button>
+                            <button v-else
+                                class="flex items-center gap-2 text-sm font-medium bg-[#4ad2fa] px-3 py-2 rounded-lg text-white">
+                                    Payer avec WAVE
+                                  <img src="/assets/logo_wave.jpg" class="size-7" />
                             </button>
                         </div>
                     </form>
@@ -351,7 +354,7 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed, watch } from 'vue';
 
 export default {
     name: 'InscriptionForm',
@@ -359,33 +362,11 @@ export default {
     setup() {
         const currentStep = ref(0);
         const steps = ['Paroisse', 'Informations', 'Détails', 'Confirmation'];
-
-        const paroisses = [
-            'Cathédrale Saint-Louis',
-            'Paroisse Saint-Joseph',
-            'Paroisse Sainte-Anne',
-            'Paroisse Saint-Pierre',
-            'Paroisse Notre-Dame',
-            'Paroisse Saint-Charles-Lwanga',
-            'Paroisse Saint-Dominique',
-            'Paroisse Saint-Paul',
-            'Paroisse Saint-Jean-Baptiste',
-            'Autre'
-        ];
-
+        const paroisses = ref([]);
+        const cebs = ref([]);
+        const loading = ref(false);
+        const loadingCebs = ref(false);
         const tailles = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
-
-        const cebs = [
-            'Sainte-Anne',
-            'Saint-Joseph',
-            'Saint-Pierre',
-            'Saint-Paul',
-            'Saint-Jean',
-            'Notre-Dame',
-            'Saint-Michel',
-            'Saint-Dominique',
-            'Autre'
-        ];
 
         const formData = reactive({
             paroisse: '',
@@ -395,7 +376,6 @@ export default {
             sexe: '',
             taille: '',
             ceb: '',
-            acceptTerms: false,
             finalConfirm: false
         });
 
@@ -407,12 +387,66 @@ export default {
             sexe: '',
             taille: '',
             ceb: '',
-            acceptTerms: '',
             finalConfirm: ''
         });
 
+        // Paroisse sélectionnée
+        const selectedParoisse = computed(() => {
+            if (!formData.paroisse) return null;
+            return paroisses.value.find(p => p.ID.toString() === formData.paroisse.toString());
+        });
+
+        // Charger les paroisses lors du chargement du composant
+        const fetchParoisses = async () => {
+            loading.value = true;
+            try {
+                const response = await fetch('https://admin.espacecatho.com/paroisses');
+                if (!response.ok) {
+                    throw new Error('Échec de récupération des paroisses');
+                }
+                const data = await response.json();
+                paroisses.value = data;
+            } catch (error) {
+                console.error('Erreur:', error);
+            } finally {
+                loading.value = false;
+            }
+        };
+
+        // Charger les CEBs lorsque la paroisse est sélectionnée
+        const fetchCebs = async (paroisseId) => {
+            if (!paroisseId) return;
+
+            loadingCebs.value = true;
+            try {
+                const response = await fetch(`https://admin.espacecatho.com/get_ceb/${paroisseId}`);
+                if (!response.ok) {
+                    throw new Error('Échec de récupération des CEBs');
+                }
+                const data = await response.json();
+                cebs.value = data || [];
+            } catch (error) {
+                console.error('Erreur:', error);
+                cebs.value = [];
+            } finally {
+                loadingCebs.value = false;
+            }
+        };
+
+        // Observer les changements de paroisse pour charger les CEBs
+        watch(() => formData.paroisse, (newVal) => {
+            if (newVal) {
+                fetchCebs(newVal);
+            } else {
+                cebs.value = [];
+            }
+        });
+
+        // Charger les paroisses au démarrage
+        fetchParoisses();
+
         const validateStep = () => {
-            // Reset all errors
+            // Réinitialiser toutes les erreurs
             for (const key in errors) {
                 errors[key] = '';
             }
@@ -455,15 +489,11 @@ export default {
                     isValid = false;
                 }
 
-                if (!formData.ceb) {
-                    errors.ceb = 'Veuillez sélectionner votre CEB';
-                    isValid = false;
-                }
+                // if (!formData.ceb) {
+                //     errors.ceb = 'Veuillez sélectionner votre CEB';
+                //     isValid = false;
+                // }
 
-                if (!formData.acceptTerms) {
-                    errors.acceptTerms = 'Vous devez accepter les conditions';
-                    isValid = false;
-                }
             }
             else if (currentStep.value === 3) {
                 if (!formData.finalConfirm) {
@@ -478,7 +508,7 @@ export default {
         const nextStep = () => {
             if (validateStep()) {
                 if (currentStep.value === 3) {
-                    // Submit form
+                    // Soumettre le formulaire
                     submitForm();
                 } else {
                     currentStep.value++;
@@ -493,18 +523,18 @@ export default {
         };
 
         const submitForm = () => {
-            // Here you would typically send the data to your backend
-            console.log('Submitting form with data:', formData);
+            // Ici vous pourriez envoyer les données à votre backend
+            console.log('Soumission du formulaire avec les données:', formData);
 
-            // Simulate an API call
+            // Simuler un appel API
             setTimeout(() => {
-                // Move to success step
+                // Passer à l'étape de succès
                 currentStep.value = 4;
             }, 1000);
         };
 
         const resetForm = () => {
-            // Reset form data
+            // Réinitialiser les données du formulaire
             for (const key in formData) {
                 if (typeof formData[key] === 'boolean') {
                     formData[key] = false;
@@ -513,7 +543,7 @@ export default {
                 }
             }
 
-            // Reset to first step
+            // Réinitialiser à la première étape
             currentStep.value = 0;
         };
 
@@ -523,8 +553,11 @@ export default {
             formData,
             errors,
             paroisses,
-            tailles,
             cebs,
+            tailles,
+            loading,
+            loadingCebs,
+            selectedParoisse,
             nextStep,
             prevStep,
             resetForm

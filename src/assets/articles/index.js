@@ -21,7 +21,7 @@ export const resources = [
         title: 'Neuvaine préparatoire',
         description: `Préparez-vous spirituellement au pèlerinage en suivant la neuvaine dédiée à Marie. Chaque jour, une prière et une intention particulière vous guideront pour renforcer votre foi, demander des grâces et vous unir à la communauté des pèlerins dans la prière.`,
         image: '/assets/lecture.jpg',
-      content:'HI tops'
+        content:'HI tops'
 
     }
   ];

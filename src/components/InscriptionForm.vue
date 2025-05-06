@@ -43,11 +43,12 @@
                         </span>
 
                         <!-- Line connecting steps -->
-                        <div v-if="index < steps.length - 1" class="ml-0 md:ml-10 absolute top-5 left-10 w-full h-0.5 -z-0" :class="[
-                            currentStep > index
-                                ? 'bg-yellow-600 dark:bg-yellow-700'
-                                : 'bg-stone-200 dark:bg-stone-700'
-                        ]"></div>
+                        <div v-if="index < steps.length - 1"
+                            class="ml-0 md:ml-10 absolute top-5 left-10 w-full h-0.5 -z-0" :class="[
+                                currentStep > index
+                                    ? 'bg-yellow-600 dark:bg-yellow-700'
+                                    : 'bg-stone-200 dark:bg-stone-700'
+                            ]"></div>
                     </div>
                 </div>
             </div>
@@ -69,42 +70,83 @@
                                 Sélectionnez votre paroisse
                             </h3>
 
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="paroisse"
-                                        class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1 font-serif">
-                                        Paroisse <span class="text-red-500">*</span>
-                                    </label>
-                                    <select id="paroisse" v-model="formData.paroisse"
-                                        class="w-full border-stone-300 dark:border-stone-600 rounded-md shadow-sm py-2 px-3 focus:ring-yellow-500 focus:border-yellow-500 dark:bg-stone-700 dark:text-stone-200"
-                                        required>
-                                        <option value="" disabled selected>Sélectionnez votre paroisse</option>
-                                        <option v-if="loading" value="" disabled>Chargement des paroisses...</option>
-                                        <option v-for="paroisse in paroisses" :key="paroisse.ID" :value="paroisse.ID">
-                                            {{ paroisse.Nom_paroisse }}
-                                        </option>
-                                    </select>
-                                    <p v-if="errors.paroisse" class="mt-1 text-red-600 text-sm">{{ errors.paroisse }}
-                                    </p>
-                                </div>
-                                
-                                <!-- Affichage du logo de la paroisse sélectionnée -->
-                                <div v-if="selectedParoisse" class="mt-4 flex flex-col items-center">
-                                    <div class="w-32 h-32 flex items-center justify-center overflow-hidden rounded-md bg-white p-2 border border-stone-200">
-                                        <img :src="'data:image/jpeg;base64,' + selectedParoisse.Logo" 
-                                             :alt="selectedParoisse.Nom_paroisse" 
-                                             class="max-w-full max-h-full object-contain" />
+                            <div v-if="loading" class="flex justify-center py-6">
+                                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-yellow-600"></div>
+                            </div>
+
+                            <div v-else>
+                                <!-- Grid de cards pour les paroisses -->
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                    <div v-for="paroisse in paroisses" :key="paroisse.ID"
+                                        @click="selectParoisse(paroisse.ID)"
+                                        class="cursor-pointer group transition-all duration-200 ease-in-out" :class="[
+                                            formData.paroisse === paroisse.ID.toString()
+                                                ? 'ring-2 ring-yellow-600 dark:ring-yellow-500 bg-yellow-50 dark:bg-stone-700'
+                                                : 'hover:shadow-md border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800'
+                                        ]">
+                                        <div class="flex flex-col items-center p-4 rounded-lg h-full">
+                                            <!-- Logo -->
+                                            <div
+                                                class="w-20 h-20 flex items-center justify-center overflow-hidden rounded-md mb-3 bg-white p-2 border border-stone-200">
+                                                <img :src="'data:image/jpeg;base64,' + paroisse.Logo"
+                                                    :alt="paroisse.Nom_paroisse"
+                                                    class="max-w-full max-h-full object-contain" />
+                                            </div>
+
+                                            <!-- Info -->
+                                            <div class="text-center flex-grow">
+                                                <h4
+                                                    class="font-semibold text-stone-800 dark:text-stone-200 group-hover:text-yellow-700 dark:group-hover:text-yellow-500 transition-colors">
+                                                    {{ paroisse.Nom_paroisse }}
+                                                </h4>
+                                                <p class="text-xs text-stone-600 dark:text-stone-400 mt-1">
+                                                    Doyenné de {{ paroisse.doyenne }}
+                                                </p>
+                                                <p v-if="paroisse.Prix > 0"
+                                                    class="text-sm font-semibold text-yellow-600 dark:text-yellow-500 mt-2">
+                                                    {{ paroisse.Prix }} FCFA
+                                                </p>
+                                            </div>
+
+                                            <!-- Checkmark if selected -->
+                                            <div v-if="formData.paroisse === paroisse.ID.toString()"
+                                                class="absolute top-2 right-2 bg-yellow-600 dark:bg-yellow-700 text-white rounded-full p-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                    viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd"
+                                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="mt-3 text-center">
-                                        <h4 class="font-semibold text-stone-800 dark:text-stone-200">
-                                            {{ selectedParoisse.Nom_paroisse }}
-                                        </h4>
-                                        <p class="text-sm text-stone-600 dark:text-stone-400">
-                                            Doyenné de {{ selectedParoisse.doyenne }}
-                                        </p>
-                                        <p v-if="selectedParoisse.Prix > 0" class="text-sm font-semibold text-yellow-600 dark:text-yellow-500 mt-1">
-                                            Prix: {{ selectedParoisse.Prix }} FCFA
-                                        </p>
+                                </div>
+
+                                <!-- Error message -->
+                                <p v-if="errors.paroisse" class="mt-1 text-red-600 text-sm">{{ errors.paroisse }}</p>
+
+                                <!-- Détail de la paroisse sélectionnée -->
+                                <div v-if="selectedParoisse"
+                                    class="mt-6 p-4 border border-yellow-200 dark:border-yellow-900 bg-yellow-50 dark:bg-stone-700/50 rounded-lg">
+                                    <div class="flex flex-col md:flex-row items-center">
+                                        <div
+                                            class="w-24 h-24 flex items-center justify-center overflow-hidden rounded-md bg-white p-2 border border-stone-200">
+                                            <img :src="'data:image/jpeg;base64,' + selectedParoisse.Logo"
+                                                :alt="selectedParoisse.Nom_paroisse"
+                                                class="max-w-full max-h-full object-contain" />
+                                        </div>
+                                        <div class="ml-0 md:ml-6 mt-4 md:mt-0 text-center md:text-left">
+                                            <h4 class="font-semibold text-lg text-stone-800 dark:text-stone-200">
+                                                {{ selectedParoisse.Nom_paroisse }}
+                                            </h4>
+                                            <p class="text-sm text-stone-600 dark:text-stone-400">
+                                                Doyenné de {{ selectedParoisse.doyenne }}
+                                            </p>
+                                            <p v-if="selectedParoisse.Prix > 0"
+                                                class="text-sm font-semibold text-yellow-600 dark:text-yellow-500 mt-1">
+                                                Prix: {{ selectedParoisse.Prix }} FCFA
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -196,8 +238,7 @@
                                         CEB <span class="text-red-500">*</span>
                                     </label>
                                     <select id="ceb" v-model="formData.ceb"
-                                        class="w-full border-stone-300 dark:border-stone-600 rounded-md shadow-sm py-2 px-3 focus:ring-yellow-500 focus:border-yellow-500 dark:bg-stone-700 dark:text-stone-200"
-                                        >
+                                        class="w-full border-stone-300 dark:border-stone-600 rounded-md shadow-sm py-2 px-3 focus:ring-yellow-500 focus:border-yellow-500 dark:bg-stone-700 dark:text-stone-200">
                                         <option value="" disabled selected>Sélectionnez votre CEB</option>
                                         <option v-if="loadingCebs" value="" disabled>Chargement des CEBs...</option>
                                         <option v-if="cebs.length === 0" value="Autre">Autre</option>
@@ -206,7 +247,7 @@
                                     <p v-if="errors.ceb" class="mt-1 text-red-600 text-sm">{{ errors.ceb }}</p>
                                 </div>
 
-                              
+
                             </div>
                         </div>
 
@@ -225,7 +266,8 @@
                                     <div class="flex flex-col">
                                         <span class="text-stone-500 dark:text-stone-400">Paroisse:</span>
                                         <span class="font-medium text-stone-800 dark:text-stone-200">{{
-                                            selectedParoisse ? selectedParoisse.Nom_paroisse : formData.paroisse }}</span>
+                                            selectedParoisse ? selectedParoisse.Nom_paroisse : formData.paroisse
+                                        }}</span>
                                     </div>
 
                                     <div class="flex flex-col">
@@ -330,7 +372,7 @@
 
                             <button type="submit" v-if="currentStep < 3"
                                 class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:bg-yellow-700 dark:hover:bg-yellow-800">
-                                <span  class="flex items-center gap-2">
+                                <span class="flex items-center gap-2">
                                     Suivant
                                     <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -338,12 +380,12 @@
                                             d="M9 5l7 7-7 7" />
                                     </svg>
                                 </span>
-                               
+
                             </button>
                             <button v-else
                                 class="flex items-center gap-2 text-sm font-medium bg-[#4ad2fa] px-3 py-2 rounded-lg text-white">
-                                    Payer avec WAVE
-                                  <img src="/assets/logo_wave.jpg" class="size-7" />
+                                Payer avec WAVE
+                                <img src="/assets/logo_wave.jpg" class="size-7" />
                             </button>
                         </div>
                     </form>
@@ -441,6 +483,12 @@ export default {
                 cebs.value = [];
             }
         });
+        const selectParoisse = (id) => {
+            formData.paroisse = id.toString();
+            // Réinitialiser l'erreur si elle existait
+            errors.paroisse = '';
+        };
+
 
         // Charger les paroisses au démarrage
         fetchParoisses();
@@ -560,7 +608,8 @@ export default {
             selectedParoisse,
             nextStep,
             prevStep,
-            resetForm
+            resetForm,
+            selectParoisse 
         };
     }
 }

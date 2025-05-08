@@ -119,7 +119,7 @@
                                                 </svg>
                                             </div>
                                             <button
-                                                class="inline-flex ml-auto items-center mt-3 p-2 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:bg-yellow-700 dark:hover:bg-yellow-800">
+                                                class="inline-flex ml-aut items-center mt-3 p-2 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:bg-yellow-700 dark:hover:bg-yellow-800">
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="fill-white"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="#fff"
@@ -393,11 +393,27 @@
                                 </span>
 
                             </button>
-                            <button v-else
-                                class="flex items-center gap-2 text-sm font-medium bg-[#4ad2fa] px-3 py-2 rounded-lg text-white">
-                                Payer avec WAVE
-                                <img src="/assets/logo_wave.jpg" class="size-7" />
-                            </button>
+                           
+<!-- Replace the existing Wave button with this updated version -->
+<button v-else
+    @click.prevent="handleWavePayment"
+    :disabled="isSubmitting"
+    class="flex items-center gap-2 text-sm font-medium bg-[#4ad2fa] hover:bg-[#35b8df] px-3 py-2 rounded-lg text-white transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed">
+    <span v-if="isSubmitting" class="flex items-center">
+        <svg class="animate-spin mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Traitement...
+    </span>
+    <span v-else class="flex items-center gap-2">
+        Payer avec WAVE
+        <img src="/assets/logo_wave.jpg" class="size-7" alt="Wave logo" />
+    </span>
+</button>
+
+<!-- Add error message display below the button -->
+<p v-if="paymentError" class="mt-2 text-red-600 text-sm">{{ paymentError }}</p>
                         </div>
                     </form>
                 </div>
@@ -407,221 +423,310 @@
 </template>
 
 <script>
-import { ref, reactive, computed, watch } from 'vue';
+// Import statements
+import { ref, reactive, computed, watch, onMounted } from 'vue';
 
 export default {
-    name: 'InscriptionForm',
+  name: 'InscriptionForm',
 
-    setup() {
-        const currentStep = ref(0);
-        const steps = ['Paroisse', 'Informations', 'Détails', 'Confirmation'];
-        const paroisses = ref([]);
-        const cebs = ref([]);
-        const loading = ref(false);
-        const loadingCebs = ref(false);
-        const tailles = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
+  setup() {
+    // Keep your existing code...
+    const currentStep = ref(0);
+    const steps = ['Paroisse', 'Informations', 'Détails', 'Confirmation'];
+    const paroisses = ref([]);
+    const cebs = ref([]);
+    const loading = ref(false);
+    const loadingCebs = ref(false);
+    const tailles = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
+    
+    // Add new state variables for payment
+    const isSubmitting = ref(false);
+    const paymentError = ref('');
 
-        const formData = reactive({
-            paroisse: '',
-            prenom: '',
-            nom: '',
-            telephone: '',
-            sexe: '',
-            taille: '',
-            ceb: '',
-            finalConfirm: false
+    const formData = reactive({
+      paroisse: '',
+      prenom: '',
+      nom: '',
+      telephone: '',
+      sexe: '',
+      taille: '',
+      ceb: '',
+      finalConfirm: false
+    });
+
+    const errors = reactive({
+      paroisse: '',
+      prenom: '',
+      nom: '',
+      telephone: '',
+      sexe: '',
+      taille: '',
+      ceb: '',
+      finalConfirm: ''
+    });
+
+    // Rest of your existing code...
+    
+    // Paroisse sélectionnée
+    const selectedParoisse = computed(() => {
+      if (!formData.paroisse) return null;
+      return paroisses.value.find(p => p.ID.toString() === formData.paroisse.toString());
+    });
+
+    // Existing fetch methods...
+    const fetchParoisses = async () => {
+      loading.value = true;
+      try {
+        const response = await fetch('https://admin.espacecatho.com/paroisses');
+        if (!response.ok) {
+          throw new Error('Échec de récupération des paroisses');
+        }
+        const data = await response.json();
+        paroisses.value = data;
+      } catch (error) {
+        console.error('Erreur:', error);
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    // Existing fetchCebs method...
+    const fetchCebs = async (paroisseId) => {
+      if (!paroisseId) return;
+
+      loadingCebs.value = true;
+      try {
+        const response = await fetch(`https://admin.espacecatho.com/get_ceb/${paroisseId}`);
+        if (!response.ok) {
+          throw new Error('Échec de récupération des CEBs');
+        }
+        const data = await response.json();
+        cebs.value = data || [];
+      } catch (error) {
+        console.error('Erreur:', error);
+        cebs.value = [];
+      } finally {
+        loadingCebs.value = false;
+      }
+    };
+
+    // Existing watchers and methods...
+    watch(() => formData.paroisse, (newVal) => {
+      if (newVal) {
+        fetchCebs(newVal);
+      } else {
+        cebs.value = [];
+      }
+    });
+
+    const selectParoisse = (id) => {
+      formData.paroisse = id.toString();
+      errors.paroisse = '';
+    };
+
+    // Fetch parishes on component mount
+    fetchParoisses();
+
+    // Existing validation methods...
+    const validateStep = () => {
+      // Réinitialiser toutes les erreurs
+      for (const key in errors) {
+        errors[key] = '';
+      }
+
+      let isValid = true;
+
+      if (currentStep.value === 0) {
+        if (!formData.paroisse) {
+          errors.paroisse = 'Veuillez sélectionner votre paroisse';
+          isValid = false;
+        }
+      }
+      else if (currentStep.value === 1) {
+        if (!formData.prenom) {
+          errors.prenom = 'Le prénom est requis';
+          isValid = false;
+        }
+
+        if (!formData.nom) {
+          errors.nom = 'Le nom est requis';
+          isValid = false;
+        }
+
+        if (!formData.telephone) {
+          errors.telephone = 'Le numéro de téléphone est requis';
+          isValid = false;
+        } else if (!/^(7[0-9]|33)\s?[0-9]{3}\s?[0-9]{2}\s?[0-9]{2}$/.test(formData.telephone)) {
+          errors.telephone = 'Format invalide. Ex: 77 123 45 67';
+          isValid = false;
+        }
+
+        if (!formData.sexe) {
+          errors.sexe = 'Veuillez sélectionner votre sexe';
+          isValid = false;
+        }
+      }
+      else if (currentStep.value === 2) {
+        if (!formData.taille) {
+          errors.taille = 'Veuillez sélectionner votre taille';
+          isValid = false;
+        }
+      }
+      else if (currentStep.value === 3) {
+        if (!formData.finalConfirm) {
+          errors.finalConfirm = 'Veuillez confirmer l\'exactitude des informations';
+          isValid = false;
+        }
+      }
+
+      return isValid;
+    };
+
+    // Existing navigation methods...
+    const nextStep = () => {
+      if (validateStep()) {
+        if (currentStep.value === 3) {
+          // We'll replace this with our Wave payment
+          // submitForm();
+          handleWavePayment();
+        } else {
+          currentStep.value++;
+        }
+      }
+    };
+
+    const prevStep = () => {
+      if (currentStep.value > 0) {
+        currentStep.value--;
+      }
+    };
+
+    // Remove or keep the existing submitForm method
+    // const submitForm = () => {
+    //   console.log('Soumission du formulaire avec les données:', formData);
+    //   setTimeout(() => {
+    //     currentStep.value = 4;
+    //   }, 1000);
+    // };
+
+    const resetForm = () => {
+      for (const key in formData) {
+        if (typeof formData[key] === 'boolean') {
+          formData[key] = false;
+        } else {
+          formData[key] = '';
+        }
+      }
+      currentStep.value = 0;
+    };
+
+    // NEW METHOD: Wave Payment Handler
+    const handleWavePayment = async () => {
+      if (!validateStep()) {
+        return;
+      }
+      
+      isSubmitting.value = true;
+      paymentError.value = '';
+      
+      try {
+        // Format the telephone number to ensure it works with Wave
+        // Remove spaces and ensure proper format
+        let formattedNumber = formData.telephone.replace(/\s+/g, '');
+        if (!formattedNumber.startsWith('+221')) {
+          // If it doesn't start with +221, add it
+          formattedNumber = '+221' + formattedNumber;
+        }
+        
+        // Format the payload according to your API requirements
+        const payload = {
+          prenom: formData.prenom,
+          nom: formData.nom,
+          number: formattedNumber,
+          whatsapp: true, // Assuming all numbers are WhatsApp as per your form
+          taille: formData.taille,
+          cebId: formData.ceb || "0", // Default to "0" if not selected
+          paroisseId: formData.paroisse,
+          sexe: formData.sexe,
+          prix: selectedParoisse.value ? selectedParoisse.value.Prix.toString() : "0"
+        };
+        
+        console.log('Sending payment request with data:', payload);
+        
+        const response = await fetch('https://admin.espacecatho.com/api/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
         });
+        
+        if (!response.ok) {
+          throw new Error(`Erreur: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        // Handle the successful response - redirect to Wave's payment URL
+        if (result.wave_launch_url) {
+          console.log('Redirecting to Wave payment URL:', result.wave_launch_url);
+          // Redirect to Wave's payment page
+          window.location.href = result.wave_launch_url;
+        } else {
+          console.error('No payment URL returned from API');
+          paymentError.value = 'Erreur: Aucune URL de paiement reçue.';
+        }
+        
+      } catch (error) {
+        console.error('Payment error:', error);
+        paymentError.value = 'Une erreur est survenue lors du traitement du paiement. Veuillez réessayer.';
+      } finally {
+        isSubmitting.value = false;
+      }
+    };
 
-        const errors = reactive({
-            paroisse: '',
-            prenom: '',
-            nom: '',
-            telephone: '',
-            sexe: '',
-            taille: '',
-            ceb: '',
-            finalConfirm: ''
-        });
+    // NEW METHOD: Check payment status from URL when component mounts
+    const checkPaymentStatus = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const status = urlParams.get('status');
+      const sessionId = urlParams.get('session_id');
+      
+      console.log('Payment return detected. Status:', status, 'Session ID:', sessionId);
+      
+      if (status === 'success' && sessionId) {
+        // Payment was successful
+        currentStep.value = 4; // Show success page
+      } else if (status === 'failed' && sessionId) {
+        // Payment failed
+        paymentError.value = 'Le paiement a échoué. Veuillez réessayer ou contacter votre paroisse.';
+      }
+    };
 
-        // Paroisse sélectionnée
-        const selectedParoisse = computed(() => {
-            if (!formData.paroisse) return null;
-            return paroisses.value.find(p => p.ID.toString() === formData.paroisse.toString());
-        });
+    // Call checkPaymentStatus when the component is mounted
+    onMounted(() => {
+      checkPaymentStatus();
+    });
 
-        // Charger les paroisses lors du chargement du composant
-        const fetchParoisses = async () => {
-            loading.value = true;
-            try {
-                const response = await fetch('https://admin.espacecatho.com/paroisses');
-                if (!response.ok) {
-                    throw new Error('Échec de récupération des paroisses');
-                }
-                const data = await response.json();
-                paroisses.value = data;
-            } catch (error) {
-                console.error('Erreur:', error);
-            } finally {
-                loading.value = false;
-            }
-        };
-
-        // Charger les CEBs lorsque la paroisse est sélectionnée
-        const fetchCebs = async (paroisseId) => {
-            if (!paroisseId) return;
-
-            loadingCebs.value = true;
-            try {
-                const response = await fetch(`https://admin.espacecatho.com/get_ceb/${paroisseId}`);
-                if (!response.ok) {
-                    throw new Error('Échec de récupération des CEBs');
-                }
-                const data = await response.json();
-                cebs.value = data || [];
-            } catch (error) {
-                console.error('Erreur:', error);
-                cebs.value = [];
-            } finally {
-                loadingCebs.value = false;
-            }
-        };
-
-        // Observer les changements de paroisse pour charger les CEBs
-        watch(() => formData.paroisse, (newVal) => {
-            if (newVal) {
-                fetchCebs(newVal);
-            } else {
-                cebs.value = [];
-            }
-        });
-        const selectParoisse = (id) => {
-            formData.paroisse = id.toString();
-            // Réinitialiser l'erreur si elle existait
-            errors.paroisse = '';
-        };
-
-
-        // Charger les paroisses au démarrage
-        fetchParoisses();
-
-        const validateStep = () => {
-            // Réinitialiser toutes les erreurs
-            for (const key in errors) {
-                errors[key] = '';
-            }
-
-            let isValid = true;
-
-            if (currentStep.value === 0) {
-                if (!formData.paroisse) {
-                    errors.paroisse = 'Veuillez sélectionner votre paroisse';
-                    isValid = false;
-                }
-            }
-            else if (currentStep.value === 1) {
-                if (!formData.prenom) {
-                    errors.prenom = 'Le prénom est requis';
-                    isValid = false;
-                }
-
-                if (!formData.nom) {
-                    errors.nom = 'Le nom est requis';
-                    isValid = false;
-                }
-
-                if (!formData.telephone) {
-                    errors.telephone = 'Le numéro de téléphone est requis';
-                    isValid = false;
-                } else if (!/^(7[0-9]|33)\s?[0-9]{3}\s?[0-9]{2}\s?[0-9]{2}$/.test(formData.telephone)) {
-                    errors.telephone = 'Format invalide. Ex: 77 123 45 67';
-                    isValid = false;
-                }
-
-                if (!formData.sexe) {
-                    errors.sexe = 'Veuillez sélectionner votre sexe';
-                    isValid = false;
-                }
-            }
-            else if (currentStep.value === 2) {
-                if (!formData.taille) {
-                    errors.taille = 'Veuillez sélectionner votre taille';
-                    isValid = false;
-                }
-
-                // if (!formData.ceb) {
-                //     errors.ceb = 'Veuillez sélectionner votre CEB';
-                //     isValid = false;
-                // }
-
-            }
-            else if (currentStep.value === 3) {
-                if (!formData.finalConfirm) {
-                    errors.finalConfirm = 'Veuillez confirmer l\'exactitude des informations';
-                    isValid = false;
-                }
-            }
-
-            return isValid;
-        };
-
-        const nextStep = () => {
-            if (validateStep()) {
-                if (currentStep.value === 3) {
-                    // Soumettre le formulaire
-                    submitForm();
-                } else {
-                    currentStep.value++;
-                }
-            }
-        };
-
-        const prevStep = () => {
-            if (currentStep.value > 0) {
-                currentStep.value--;
-            }
-        };
-
-        const submitForm = () => {
-            // Ici vous pourriez envoyer les données à votre backend
-            console.log('Soumission du formulaire avec les données:', formData);
-
-            // Simuler un appel API
-            setTimeout(() => {
-                // Passer à l'étape de succès
-                currentStep.value = 4;
-            }, 1000);
-        };
-
-        const resetForm = () => {
-            // Réinitialiser les données du formulaire
-            for (const key in formData) {
-                if (typeof formData[key] === 'boolean') {
-                    formData[key] = false;
-                } else {
-                    formData[key] = '';
-                }
-            }
-
-            // Réinitialiser à la première étape
-            currentStep.value = 0;
-        };
-
-        return {
-            currentStep,
-            steps,
-            formData,
-            errors,
-            paroisses,
-            cebs,
-            tailles,
-            loading,
-            loadingCebs,
-            selectedParoisse,
-            nextStep,
-            prevStep,
-            resetForm,
-            selectParoisse
-        };
-    }
+    return {
+      currentStep,
+      steps,
+      formData,
+      errors,
+      paroisses,
+      cebs,
+      tailles,
+      loading,
+      loadingCebs,
+      selectedParoisse,
+      nextStep,
+      prevStep,
+      resetForm,
+      selectParoisse,
+      // New return values for payment
+      isSubmitting,
+      paymentError,
+      handleWavePayment
+    };
+  }
 }
 </script>

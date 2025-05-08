@@ -1,5 +1,5 @@
 <template>
-    <section id="home" class="relative pt-20 pb-5 transition-colors duration-300 bg-stone-50 dark:bg-stone-900">
+    <section id="home" class="relative pt-56 pb-5 transition-colors duration-300 bg-stone-50 dark:bg-stone-900">
         <!-- Background image with overlay -->
         <div class="absolute inset-0 bg-cover bg-center opacity-15 dark:opacity-10"
             style="background-image: url('/images/cathedral-background.jpg')"></div>
@@ -37,7 +37,7 @@
                 </div>
 
                 <!-- Countdown component -->
-                <div class="lg:w-5/12">
+                <div class="w-full lg:w-5/12">
                     <div class="relative overflow-hidden">
                         <!-- Card with subtle design elements -->
                         <div

@@ -1,5 +1,5 @@
 <template>
-    <section class="py-10 bg-stone-50 dark:bg-stone-900">
+    <section class="py-44 bg-stone-50 dark:bg-stone-900">
         <div class="container mx-auto px-4 max-w-6xl">
             <div class="flex flex-col lg:flex-row items-start gap-8 lg:gap-16">
                 <!-- Image container -->

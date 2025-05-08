@@ -118,6 +118,16 @@
                                                         clip-rule="evenodd" />
                                                 </svg>
                                             </div>
+                                            <button
+                                                class="inline-flex ml-auto items-center mt-3 p-2 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:bg-yellow-700 dark:hover:bg-yellow-800">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="fill-white"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="#fff"
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round" />
+                                                </svg>
+
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -242,7 +252,8 @@
                                         <option value="" disabled selected>Sélectionnez votre CEB</option>
                                         <option v-if="loadingCebs" value="" disabled>Chargement des CEBs...</option>
                                         <option v-if="cebs.length === 0" value="Autre">Autre</option>
-                                        <option v-for="ceb in cebs" :key="ceb.ID" :value="ceb.ID">{{ ceb.Nom_Ceb }}</option>
+                                        <option v-for="ceb in cebs" :key="ceb.ID" :value="ceb.ID">{{ ceb.Nom_Ceb }}
+                                        </option>
                                     </select>
                                     <p v-if="errors.ceb" class="mt-1 text-red-600 text-sm">{{ errors.ceb }}</p>
                                 </div>
@@ -267,13 +278,13 @@
                                         <span class="text-stone-500 dark:text-stone-400">Paroisse:</span>
                                         <span class="font-medium text-stone-800 dark:text-stone-200">{{
                                             selectedParoisse ? selectedParoisse.Nom_paroisse : formData.paroisse
-                                        }}</span>
+                                            }}</span>
                                     </div>
 
                                     <div class="flex flex-col">
                                         <span class="text-stone-500 dark:text-stone-400">Nom complet:</span>
                                         <span class="font-medium text-stone-800 dark:text-stone-200">{{ formData.prenom
-                                        }} {{ formData.nom }}</span>
+                                            }} {{ formData.nom }}</span>
                                     </div>
 
                                     <div class="flex flex-col">
@@ -285,19 +296,19 @@
                                     <div class="flex flex-col">
                                         <span class="text-stone-500 dark:text-stone-400">Sexe:</span>
                                         <span class="font-medium text-stone-800 dark:text-stone-200">{{ formData.sexe
-                                        }}</span>
+                                            }}</span>
                                     </div>
 
                                     <div class="flex flex-col">
                                         <span class="text-stone-500 dark:text-stone-400">Taille de t-shirt:</span>
                                         <span class="font-medium text-stone-800 dark:text-stone-200">{{ formData.taille
-                                        }}</span>
+                                            }}</span>
                                     </div>
 
                                     <div class="flex flex-col">
                                         <span class="text-stone-500 dark:text-stone-400">CEB:</span>
                                         <span class="font-medium text-stone-800 dark:text-stone-200">{{ formData.ceb
-                                        }}</span>
+                                            }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -609,7 +620,7 @@ export default {
             nextStep,
             prevStep,
             resetForm,
-            selectParoisse 
+            selectParoisse
         };
     }
 }

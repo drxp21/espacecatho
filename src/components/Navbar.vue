@@ -111,14 +111,14 @@ onUnmounted(() => {
                             </router-link>
                         </li>
 
-                        <router-link to="/inscription"
+                        <a href="https://admin.espacecatho.com"
                             class="px-4 xl:px-5 py-2 rounded-md relative group overflow-hidden block lg:hidden">
                             <span
                                 class="absolute inset-0 rounded-md transition-all duration-300 ease-in-out bg-yellow-700 dark:bg-yellow-600 border border-yellow-800 dark:border-yellow-700 group-hover:bg-yellow-800 dark:group-hover:bg-yellow-700">
                             </span>
                             <span
                                 class="relative flex items-center justify-center text-white text-sm xl:text-base whitespace-nowrap">
-                                S'inscrire
+                                Connexion
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                     class="h-4 w-4 ml-1 transform transition-transform duration-200 group-hover:translate-x-1"
                                     viewBox="0 0 20 20" fill="currentColor">
@@ -127,7 +127,7 @@ onUnmounted(() => {
                                         clip-rule="evenodd" />
                                 </svg>
                             </span>
-                        </router-link>
+                        </a>
                     </ul>
                 </div>
 
@@ -140,14 +140,14 @@ onUnmounted(() => {
 
                     <!-- Login/Register buttons (desktop only) -->
                     <div class="hidden lg:flex lg:items-center gap-3 xl:gap-4">
-                        <router-link to="/inscription"
+                        <a href="https://admin.espacecatho.com"
                             class="px-4 xl:px-5 py-2 rounded-md relative group overflow-hidden">
                             <span
                                 class="absolute inset-0 rounded-md transition-all duration-300 ease-in-out bg-yellow-700 dark:bg-yellow-600 border border-yellow-800 dark:border-yellow-700 group-hover:bg-yellow-800 dark:group-hover:bg-yellow-700">
                             </span>
                             <span
                                 class="relative flex items-center justify-center text-white text-sm xl:text-base font-serif whitespace-nowrap">
-                                S'inscrire
+                                Connexion
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                     class="h-4 w-4 ml-1 transform transition-transform duration-200 group-hover:translate-x-1"
                                     viewBox="0 0 20 20" fill="currentColor">
@@ -156,7 +156,7 @@ onUnmounted(() => {
                                         clip-rule="evenodd" />
                                 </svg>
                             </span>
-                        </router-link>
+                        </a>
                     </div>
 
                     <!-- Mobile menu button -->

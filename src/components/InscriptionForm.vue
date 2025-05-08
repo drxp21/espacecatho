@@ -413,8 +413,8 @@
 </button>
 
 <!-- Add error message display below the button -->
+</div>
 <p v-if="paymentError" class="mt-2 text-red-600 text-sm">{{ paymentError }}</p>
-                        </div>
                     </form>
                 </div>
             </div>
@@ -722,7 +722,6 @@ export default {
       prevStep,
       resetForm,
       selectParoisse,
-      // New return values for payment
       isSubmitting,
       paymentError,
       handleWavePayment

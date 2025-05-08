@@ -242,7 +242,7 @@
                                         <option value="" disabled selected>Sélectionnez votre CEB</option>
                                         <option v-if="loadingCebs" value="" disabled>Chargement des CEBs...</option>
                                         <option v-if="cebs.length === 0" value="Autre">Autre</option>
-                                        <option v-for="ceb in cebs" :key="ceb.id" :value="ceb.id">{{ ceb.nom }}</option>
+                                        <option v-for="ceb in cebs" :key="ceb.ID" :value="ceb.ID">{{ ceb.Nom_Ceb }}</option>
                                     </select>
                                     <p v-if="errors.ceb" class="mt-1 text-red-600 text-sm">{{ errors.ceb }}</p>
                                 </div>
